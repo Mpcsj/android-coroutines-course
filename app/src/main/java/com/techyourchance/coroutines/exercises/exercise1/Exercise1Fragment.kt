@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import br.mpcsj.common.utils.ViewUtils
 import com.techyourchance.coroutines.R
 import com.techyourchance.coroutines.common.BaseFragment
 import com.techyourchance.coroutines.common.ThreadInfoLogger
@@ -53,6 +54,7 @@ class Exercise1Fragment : BaseFragment() {
             logThreadInfo("button callback")
             coroutineScope.launch {
                 btnGetReputation.isEnabled = false
+                context?.let { it1 -> ViewUtils.hideKeyboardFromContext(it1,btnGetReputation) };
                 getReputationForUser(edtUserId.text.toString())
                 btnGetReputation.isEnabled = true
             }
