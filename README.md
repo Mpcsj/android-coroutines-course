@@ -1,0 +1,2 @@
+# Project forked from [android coroutines course](https://github.com/techyourchance/android-coroutines-course)
+## Here i'm solving the exercises and making some small updates in order to boost my learning
