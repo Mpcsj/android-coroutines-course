@@ -15,10 +15,7 @@ import com.techyourchance.coroutines.R
 import com.techyourchance.coroutines.common.BaseFragment
 import com.techyourchance.coroutines.common.ThreadInfoLogger
 import com.techyourchance.coroutines.home.ScreenReachableFromHome
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class Exercise1Fragment : BaseFragment() {
 
@@ -55,7 +52,8 @@ class Exercise1Fragment : BaseFragment() {
             coroutineScope.launch {
                 btnGetReputation.isEnabled = false
                 context?.let { it1 -> ViewUtils.hideKeyboardFromContext(it1,btnGetReputation) };
-                getReputationForUser(edtUserId.text.toString())
+                val reputation = getReputationForUser(edtUserId.text.toString())
+                Toast.makeText(requireContext(), "reputation: $reputation", Toast.LENGTH_SHORT).show()
                 btnGetReputation.isEnabled = true
             }
         }
@@ -63,14 +61,17 @@ class Exercise1Fragment : BaseFragment() {
         return view
     }
 
-    private suspend fun getReputationForUser(userId: String) {
+    private suspend fun getReputationForUser(userId: String):Int {
         logThreadInfo("getReputationForUser()")
-        val reputation = withContext(Dispatchers.Default){
+        return withContext(Dispatchers.Default){
             getReputationEndpoint.getReputation(userId)
         }
-        Toast.makeText(requireContext(), "reputation: $reputation", Toast.LENGTH_SHORT).show()
     }
 
+    override fun onPause() {
+        super.onPause()
+        coroutineScope.cancel()
+    }
     private fun logThreadInfo(message: String) {
         ThreadInfoLogger.logThreadInfo(message)
     }
