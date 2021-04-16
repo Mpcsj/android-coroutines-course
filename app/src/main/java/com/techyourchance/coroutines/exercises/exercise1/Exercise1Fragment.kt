@@ -68,8 +68,8 @@ class Exercise1Fragment : BaseFragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         coroutineScope.cancel()
     }
     private fun logThreadInfo(message: String) {
