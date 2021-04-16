@@ -74,7 +74,7 @@ class Exercise2Fragment : BaseFragment() {
         logThreadInfo("onStop()")
         super.onStop()
         job?.cancel()
-        btnGetReputation.isEnabled = true
+        btnGetReputation.isEnabled = !edtUserId.text.isNullOrEmpty()
     }
 
     private fun logThreadInfo(message: String) {
