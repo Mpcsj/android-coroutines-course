@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import br.mpcsj.common.utils.ViewUtils
 import com.techyourchance.coroutines.R
 import com.techyourchance.coroutines.common.BaseFragment
 import com.techyourchance.coroutines.common.ThreadInfoLogger
@@ -25,11 +26,9 @@ class Exercise3Fragment : BaseFragment() {
     private lateinit var edtUserId: EditText
     private lateinit var btnGetReputation: Button
     private lateinit var txtElapsedTime: TextView
-
-
     private lateinit var getReputationEndpoint: GetReputationEndpoint
-
     private var job: Job? = null
+    private var initialTime:Long= -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +47,6 @@ class Exercise3Fragment : BaseFragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 btnGetReputation.isEnabled = !s.isNullOrEmpty()
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
 
@@ -56,8 +54,12 @@ class Exercise3Fragment : BaseFragment() {
         btnGetReputation.setOnClickListener {
             logThreadInfo("button callback")
             job = coroutineScope.launch {
+                context?.let {ViewUtils.hideKeyboardFromContext(it,btnGetReputation)}
                 btnGetReputation.isEnabled = false
+                initialTime = System.currentTimeMillis()
                 val reputation = getReputationForUser(edtUserId.text.toString())
+                val aux = "Elapsed time: ${(System.currentTimeMillis()-initialTime)}s"
+                txtElapsedTime.text = aux
                 Toast.makeText(requireContext(), "reputation: $reputation", Toast.LENGTH_SHORT).show()
                 btnGetReputation.isEnabled = true
             }
@@ -68,7 +70,8 @@ class Exercise3Fragment : BaseFragment() {
 
     override fun onStop() {
         super.onStop()
-        job?.cancel()
+//        job?.cancel()
+        coroutineScope.coroutineContext.cancelChildren()
         btnGetReputation.isEnabled = true
     }
 
